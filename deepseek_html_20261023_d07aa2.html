@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>YOUR HUB GAMES · Premium Roblox Hub</title>
+  <style>
+    /* ===== RESET & GLOBAL ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    :root {
+      --bg-main: #080A05;
+      --bg-card: #191B12;
+      --bg-header: #101109;
+      --olive-primary: #526C2B;
+      --olive-secondary: #6B852F;
+      --gold: #D4AD00;
+      --gold-bright: #E8C52B;
+      --text-primary: #FFFFFF;
+      --text-secondary: #A6A69A;
+      --online-green: #39E58C;
+      --border-glow: rgba(212, 173, 0, 0.18);
+      --border-subtle: rgba(212, 173, 0, 0.08);
+      --shadow-card: 0 12px 28px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(212, 173, 0, 0.12);
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-bottom: 32px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient background glows */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: -10%;
+      width: 80vw;
+      height: 80vw;
+      background: radial-gradient(circle, rgba(82, 108, 43, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -15%;
+      right: -10%;
+      width: 70vw;
+      height: 70vw;
+      background: radial-gradient(circle, rgba(212, 173, 0, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Gold particles container */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: var(--gold-bright);
+      border-radius: 50%;
+      opacity: 0.4;
+      animation: floatParticle 12s infinite linear;
+    }
+
+    @keyframes floatParticle {
+      0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+      20% { opacity: 0.6; }
+      80% { opacity: 0.6; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    /* ===== STICKY HEADER ===== */
+    .site-header {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      background: rgba(16, 17, 9, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-glow);
+      z-index: 100;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 0 40px rgba(82, 108, 43, 0.1);
+      transition: box-shadow 0.3s;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .diamond-logo {
+      position: relative;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: rotate(45deg);
+      background: linear-gradient(135deg, var(--olive-primary), #3d4f1e);
+      border-radius: 8px;
+      border: 1px solid rgba(212, 173, 0, 0.5);
+      box-shadow: 0 0 20px rgba(107, 133, 47, 0.5), inset 0 0 10px rgba(212, 173, 0, 0.3);
+    }
+
+    .diamond-logo::before {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: var(--gold-bright);
+      border-radius: 2px;
+      box-shadow: 0 0 16px var(--gold);
+    }
+
+    .site-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .site-title .highlight {
+      color: var(--gold-bright);
+      text-shadow: 0 0 20px rgba(232, 197, 43, 0.4);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .header-actions .icon-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(212, 173, 0, 0.15);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 1rem;
+    }
+
+    .header-actions .icon-btn:hover {
+      background: rgba(212, 173, 0, 0.1);
+      border-color: var(--gold);
+      color: var(--gold-bright);
+    }
+
+    /* ===== MAIN CONTAINER ===== */
+    .main-container {
+      width: 100%;
+      max-width: 1100px;
+      padding: 20px 16px 20px;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ===== NOTICE / ANNOUNCEMENT ===== */
+    .notice-card {
+      background: linear-gradient(145deg, #1a1d12, #12140b);
+      border: 1px solid var(--border-glow);
+      border-radius: 20px;
+      padding: 20px 18px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 30px rgba(82, 108, 43, 0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .notice-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .notice-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .notice-icon {
+      width: 28px;
+      height: 28px;
+      background: rgba(212, 173, 0, 0.12);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold-bright);
+      font-size: 1rem;
+    }
+
+    .notice-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.4px;
+      color: var(--text-primary);
+    }
+
+    .notice-title .gold {
+      color: var(--gold-bright);
+    }
+
+    .notice-text {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      padding-left: 2px;
+    }
+
+    .notice-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(212, 173, 0, 0.3);
+      color: var(--gold-bright);
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+    }
+
+    .btn-outline:hover {
+      background: rgba(212, 173, 0, 0.1);
+      border-color: var(--gold);
+      box-shadow: 0 0 20px rgba(212, 173, 0, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline:active {
+      transform: scale(0.97);
+    }
+
+    /* ===== SEARCH & FILTER ===== */
+    .controls-row {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 40px;
+      padding: 0 18px;
+      height: 48px;
+      transition: border 0.3s, box-shadow 0.3s;
+    }
+
+    .search-box:focus-within {
+      border-color: rgba(212, 173, 0, 0.4);
+      box-shadow: 0 0 24px rgba(212, 173, 0, 0.08);
+    }
+
+    .search-box svg {
+      color: var(--text-secondary);
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      width: 100%;
+      padding: 10px 0;
+      font-family: inherit;
+    }
+
+    .search-box input::placeholder {
+      color: rgba(166, 166, 154, 0.6);
+    }
+
+    .filter-pills {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+
+    .filter-pills::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(212, 173, 0, 0.1);
+      color: var(--text-secondary);
+      padding: 8px 18px;
+      border-radius: 30px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.25s;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+
+    .filter-pill.active {
+      background: linear-gradient(135deg, var(--olive-primary), var(--olive-secondary));
+      color: white;
+      border-color: var(--gold);
+      box-shadow: 0 0 20px rgba(107, 133, 47, 0.3);
+    }
+
+    .filter-pill:hover {
+      border-color: rgba(212, 173, 0, 0.3);
+      color: var(--text-primary);
+    }
+
+    /* ===== SERVER GRID ===== */
+    .server-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 700px) {
+      .server-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    /* ===== SERVER CARD ===== */
+    .server-card {
+      background: var(--bg-card);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      border: 1px solid rgba(212, 173, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      animation: cardEnter 0.5s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+      animation-delay: calc(var(--i, 0) * 0.06s);
+      position: relative;
+      will-change: transform;
+    }
+
+    .server-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 40px rgba(212, 173, 0, 0.08);
+      border-color: rgba(212, 173, 0, 0.25);
+    }
+
+    @keyframes cardEnter {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-image-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      background: #0d0f08;
+    }
+
+    .card-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.2, 0.9, 0.3, 1);
+      display: block;
+    }
+
+    .server-card:hover .card-image {
+      transform: scale(1.05);
+    }
+
+    .card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, rgba(8, 10, 5, 0.95) 0%, rgba(8, 10, 5, 0.2) 40%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .card-category {
+      position: absolute;
+      bottom: 12px;
+      left: 16px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      color: var(--gold-bright);
+      text-transform: uppercase;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+      z-index: 2;
+    }
+
+    .badge-available {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(57, 229, 140, 0.12);
+      border: 1px solid var(--online-green);
+      color: var(--online-green);
+      font-size: 0.6rem;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 0 16px rgba(57, 229, 140, 0.15);
+      z-index: 2;
+    }
+
+    .card-body {
+      padding: 16px 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.2px;
+      line-height: 1.2;
+    }
+
+    .card-max-label {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 2px;
+    }
+
+    .card-max-label span:first-child {
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .card-max-number {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--gold-bright);
+      line-height: 1;
+      text-shadow: 0 0 30px rgba(232, 197, 43, 0.3);
+    }
+
+    .players-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .avatar-stack {
+      display: flex;
+      align-items: center;
+    }
+
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--bg-card);
+      object-fit: cover;
+      background: #2a2d1e;
+      margin-left: -10px;
+      transition: transform 0.2s;
+      position: relative;
+      box-shadow: 0 0 0 1px rgba(212, 173, 0, 0.2);
+    }
+
+    .avatar:first-child {
+      margin-left: 0;
+    }
+
+    .avatar:hover {
+      transform: scale(1.15);
+      z-index: 5;
+    }
+
+    .avatar-more {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2a2d1e, #1a1d12);
+      border: 2px solid var(--bg-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: var(--gold-bright);
+      margin-left: -10px;
+      box-shadow: 0 0 0 1px rgba(212, 173, 0, 0.2);
+      position: relative;
+      z-index: 1;
+    }
+
+    .online-count {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-left: 4px;
+    }
+
+    .online-count strong {
+      color: var(--online-green);
+      font-weight: 800;
+    }
+
+    .join-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--olive-primary) 0%, var(--olive-secondary) 50%, var(--gold) 100%);
+      border: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      color: white;
+      font-weight: 800;
+      font-size: 0.85rem;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 24px rgba(107, 133, 47, 0.2);
+      font-family: inherit;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .join-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.1) 100%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .join-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 40px rgba(212, 173, 0, 0.25);
+    }
+
+    .join-btn:hover::before {
+      opacity: 1;
+    }
+
+    .join-btn:active {
+      transform: scale(0.97);
+      background: linear-gradient(135deg, #3d4f1e 0%, #526C2B 50%, #a88700 100%);
+    }
+
+    .join-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+      flex-shrink: 0;
+    }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      text-align: center;
+      gap: 16px;
+      color: var(--text-secondary);
+      background: var(--bg-card);
+      border-radius: 24px;
+      border: 1px dashed var(--border-glow);
+    }
+
+    .empty-state svg {
+      color: var(--olive-primary);
+      opacity: 0.6;
+    }
+
+    .empty-state p {
+      font-size: 0.95rem;
+      max-width: 280px;
+      line-height: 1.5;
+    }
+
+    /* ===== FLOATING DISCORD BUTTON ===== */
+    .discord-float {
+      position: fixed;
+      bottom: 24px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--olive-primary), var(--olive-secondary));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(212, 173, 0, 0.4);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 32px rgba(57, 229, 140, 0.2);
+      cursor: pointer;
+      z-index: 90;
+      transition: all 0.25s;
+      animation: floatDiscord 3s ease-in-out infinite;
+    }
+
+    @keyframes floatDiscord {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .discord-float:hover {
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.8), 0 0 48px rgba(57, 229, 140, 0.35);
+      border-color: var(--gold);
+    }
+
+    .discord-float:active {
+      transform: scale(0.92);
+    }
+
+    .discord-float svg {
+      width: 30px;
+      height: 30px;
+      fill: #f0ead8;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+    }
+
+    /* ===== LOADING OVERLAY ===== */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 10, 5, 0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .loading-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .spinner-ring {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 3px solid rgba(212, 173, 0, 0.15);
+      border-top-color: var(--gold-bright);
+      border-right-color: var(--olive-secondary);
+      animation: spin 1s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+      box-shadow: 0 0 40px rgba(212, 173, 0, 0.2);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      text-align: center;
+      padding: 0 24px;
+      line-height: 1.5;
+    }
+
+    .loading-text .gold {
+      color: var(--gold-bright);
+    }
+
+    .loading-bar-wrap {
+      width: 200px;
+      max-width: 70vw;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .loading-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--olive-secondary), var(--gold-bright));
+      border-radius: 10px;
+      transition: width 0.3s ease;
+      box-shadow: 0 0 16px rgba(212, 173, 0, 0.5);
+    }
+
+    .loading-note {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      opacity: 0.7;
+      letter-spacing: 0.5px;
+      text-align: center;
+      max-width: 260px;
+      line-height: 1.4;
+      padding: 0 20px;
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(25, 27, 18, 0.95);
+      border: 1px solid var(--border-glow);
+      color: var(--text-primary);
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.35s ease;
+      backdrop-filter: blur(8px);
+      white-space: nowrap;
+      max-width: 90vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== RESPONSIVE TWEAKS ===== */
+    @media (max-width: 480px) {
+      .site-header {
+        padding: 12px 16px;
+      }
+      .site-title {
+        font-size: 0.95rem;
+      }
+      .diamond-logo {
+        width: 28px;
+        height: 28px;
+      }
+      .diamond-logo::before {
+        width: 10px;
+        height: 10px;
+      }
+      .card-title {
+        font-size: 1.05rem;
+      }
+      .card-max-number {
+        font-size: 1.4rem;
+      }
+      .avatar, .avatar-more {
+        width: 28px;
+        height: 28px;
+      }
+      .avatar-more {
+        font-size: 0.55rem;
+      }
+      .join-btn {
+        padding: 12px 16px;
+        font-size: 0.8rem;
+      }
+      .discord-float {
+        width: 54px;
+        height: 54px;
+        bottom: 18px;
+        right: 16px;
+      }
+      .discord-float svg {
+        width: 26px;
+        height: 26px;
+      }
+      .notice-card {
+        padding: 16px 14px;
+      }
+      .notice-title {
+        font-size: 1rem;
+      }
+      .notice-text {
+        font-size: 0.85rem;
+      }
+      .btn-outline {
+        padding: 7px 12px;
+        font-size: 0.68rem;
+      }
+    }
+
+    @media (min-width: 700px) {
+      .main-container {
+        padding: 28px 24px;
+        gap: 24px;
+      }
+      .server-grid {
+        gap: 24px;
+      }
+      .card-body {
+        padding: 18px 20px 20px;
+      }
+      .discord-float {
+        width: 68px;
+        height: 68px;
+        bottom: 32px;
+        right: 28px;
+      }
+      .discord-float svg {
+        width: 34px;
+        height: 34px;
+      }
+    }
+
+    @media (min-width: 1100px) {
+      .main-container {
+        max-width: 1100px;
+      }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .particle {
+        display: none;
+      }
+    }
+
+    /* Focus styles */
+    button:focus-visible, input:focus-visible {
+      outline: 2px solid var(--gold-bright);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating gold particles -->
+  <div class="particles" id="particles"></div>
+
+  <!-- ===== STICKY HEADER ===== -->
+  <header class="site-header" id="siteHeader">
+    <div class="logo-area">
+      <div class="diamond-logo" aria-hidden="true"></div>
+      <div class="site-title" id="siteTitle">
+        YOUR <span class="highlight">HUB</span> GAMES
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" aria-label="Search" id="headerSearchBtn" title="Search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      </button>
+      <button class="icon-btn" aria-label="Discord" id="headerDiscordBtn" title="Discord">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-container">
+
+    <!-- ===== EDITABLE NOTICE SECTION ===== -->
+    <section class="notice-card" aria-label="Announcement">
+      <div class="notice-header">
+        <div class="notice-icon">📢</div>
+        <h2 class="notice-title" id="noticeTitle">
+          WELCOME TO <span class="gold">OUR GAMING HUB</span>
+        </h2>
+      </div>
+      <p class="notice-text" id="noticeText">
+        Check the available servers below and choose your preferred server. Join our community and start playing with friends!
+      </p>
+      <div class="notice-actions" id="noticeActions">
+        <!-- Buttons injected by JS -->
+      </div>
+    </section>
+
+    <!-- ===== SEARCH & FILTER ===== -->
+    <div class="controls-row">
+      <div class="search-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="searchInput" placeholder="Search servers..." aria-label="Search servers">
+      </div>
+      <div class="filter-pills" id="filterPills" role="group" aria-label="Filter servers">
+        <button class="filter-pill active" data-filter="all">ALL</button>
+        <button class="filter-pill" data-filter="popular">POPULAR</button>
+        <button class="filter-pill" data-filter="available">AVAILABLE</button>
+      </div>
+    </div>
+
+    <!-- ===== SERVER GRID ===== -->
+    <div class="server-grid" id="serverGrid" role="list">
+      <!-- Cards injected by JS -->
+    </div>
+
+  </main>
+
+  <!-- ===== FLOATING DISCORD BUTTON ===== -->
+  <button class="discord-float" id="discordFloatBtn" aria-label="Join our Discord">
+    <svg viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189z"/></svg>
+  </button>
+
+  <!-- ===== LOADING OVERLAY ===== -->
+  <div class="loading-overlay" id="loadingOverlay" aria-hidden="true">
+    <div class="spinner-ring" aria-hidden="true"></div>
+    <div class="loading-text" id="loadingText">
+      CONNECTING TO <span class="gold">SERVER</span>...
+    </div>
+    <div class="loading-bar-wrap">
+      <div class="loading-bar" id="loadingBar"></div>
+    </div>
+    <p class="loading-note" id="loadingNote">
+      This is a demonstration animation. No real connection is being made.
+    </p>
+  </div>
+
+  <!-- ===== TOAST ===== -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    /* ============================================================
+       ===== EDITABLE CONFIGURATION =============================
+       ============================================================
+       Customize everything below to make this hub your own.
+    */
+
+    // --- SITE TITLE ---
+    const SITE_CONFIG = {
+      titlePrefix: "YOUR",
+      titleHighlight: "HUB",
+      titleSuffix: "GAMES",
+    };
+
+    // --- DISCORD ---
+    const DISCORD_CONFIG = {
+      inviteUrl: "https://discord.gg/yourinvite",
+      fallbackMessage: "Join our Discord community! (Set your invite link in the config.)",
+    };
+
+    // --- ANNOUNCEMENT / NOTICE ---
+    const NOTICE_CONFIG = {
+      title: "WELCOME TO <span class='gold'>OUR GAMING HUB</span>",
+      text: "Check the available servers below and choose your preferred server. Join our community and start playing with friends!",
+      buttons: [
+        { label: "VISIT PROFILE", url: "https://www.roblox.com/users/1/profile", style: "outline" },
+        { label: "OPEN GAME", url: "https://www.roblox.com/games/1/", style: "outline" },
+        { label: "PRIVATE SERVER", url: "https://www.roblox.com/games/1/private", style: "outline" },
+      ],
+      imageUrl: "",
+    };
+
+    // --- SERVER CARDS DATA ---
+    // Game images from your provided URLs.
+    // Avatars are all unique — no repeats across cards.
+    const SERVERS = [
+      {
+        title: "Sword Game",
+        category: "CONDO WORLD",
+        maxPlayers: 20,
+        playersOnline: 11,
+        imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-TdB8kbtUOon-SBi4AX20ILZG7B3zVetC7wqhBz1bEA&s=10",
+        avatars: [
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFbX9gt9FrzP-Gq6zOWlT4_BFX9PeHAsrTfVMEX2OqjQ&s=10",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSkSWSeWcyUFronRiFOeYPQvia2Ph5tWkJb3A21xQVqw&s=10",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToLsee9JINt0a-ZrUbD9Fgt6tAjJn1xY6lpFLf6O_7PQ&s=10"
+        ],
+        moreCount: 8,
+        joinUrl: "https://www.roblox.com/games/1/",
+        isAvailable: true
+      },
+      {
+        title: "Goat",
+        category: "HUB",
+        maxPlayers: 12,
+        playersOnline: 9,
+        imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZsI8KxLdPXLL71UoQwlwHRkkdb9InVbWeu5v7R63kDw&s=10",
+        avatars: [
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYTmU_Xxiloo_sZ0uBV9caE_a6pwdmRgixu5tD4DyJlg&s=10",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJ5JQETG7W4sosUE94gdshyT5DG6tHYKx9fYn7pKW88g&s",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ23EsnPqcMaK6Z0xJXqjvHRREMSqsT1bJV2Lp_LU_USg&s=10"
+        ],
+        moreCount: 6,
+        joinUrl: "https://www.roblox.com/games/2/",
+        isAvailable: true
+      },
+      {
+        title: "V4",
+        category: "CONDO WORLD",
+        maxPlayers: 20,
+        playersOnline: 14,
+        imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSb00NNUvv4vNsIUx4Fid0G_lNofNsTb23tAjRKM7pLUA&s",
+        avatars: [
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYHODhP2Bx9H_lfo6w3ORVcYBTn4J0OMiTHvugPoDnpg&s=10",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtSGolwB3QcDsowwOQgssNSqkyvcQ8PFuEd49E-wh22A&s=10",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRipwyvPnHP3c7Kq11CHLCxVLaUtKc7HT5aJn90_fgNsg&s=10"
+        ],
+        moreCount: 11,
+        joinUrl: "https://www.roblox.com/games/3/",
+        isAvailable: true
+      },
+      {
+        title: "Slap Battles",
+        category: "POPULAR",
+        maxPlayers: 20,
+        playersOnline: 17,
+        imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6ASe4DnK1Tgr-qTMywEyDVcOayBauDXo_sh8VeIBPBA&s=10",
+        avatars: [
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_2j8Bj92w2xcvVXPa8kEUWeXouyQABh8t46lWF6-Ecw&s=10",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDt1k8vvdW4bBaq1oBpNgNs3b4nH0aS8lNgA19OLNrUw&s=10",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFbX9gt9FrzP-Gq6zOWlT4_BFX9PeHAsrTfVMEX2OqjQ&s=10"
+        ],
+        moreCount: 14,
+        joinUrl: "https://www.roblox.com/games/4/",
+        isAvailable: true
+      },
+      {
+        title: "Crim",
+        category: "HUB",
+        maxPlayers: 20,
+        playersOnline: 5,
+        imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-TdB8kbtUOon-SBi4AX20ILZG7B3zVetC7wqhBz1bEA&s=10",
+        avatars: [
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSkSWSeWcyUFronRiFOeYPQvia2Ph5tWkJb3A21xQVqw&s=10",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToLsee9JINt0a-ZrUbD9Fgt6tAjJn1xY6lpFLf6O_7PQ&s=10",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYTmU_Xxiloo_sZ0uBV9caE_a6pwdmRgixu5tD4DyJlg&s=10"
+        ],
+        moreCount: 2,
+        joinUrl: "https://www.roblox.com/games/5/",
+        isAvailable: false
+      },
+      {
+        title: "2p Goat",
+        category: "CONDO WORLD",
+        maxPlayers: 20,
+        playersOnline: 12,
+        imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZsI8KxLdPXLL71UoQwlwHRkkdb9InVbWeu5v7R63kDw&s=10",
+        avatars: [
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJ5JQETG7W4sosUE94gdshyT5DG6tHYKx9fYn7pKW88g&s",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ23EsnPqcMaK6Z0xJXqjvHRREMSqsT1bJV2Lp_LU_USg&s=10",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYHODhP2Bx9H_lfo6w3ORVcYBTn4J0OMiTHvugPoDnpg&s=10"
+        ],
+        moreCount: 9,
+        joinUrl: "https://www.roblox.com/games/6/",
+        isAvailable: true
+      },
+      {
+        title: "2p V4",
+        category: "HUB",
+        maxPlayers: 20,
+        playersOnline: 8,
+        imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSb00NNUvv4vNsIUx4Fid0G_lNofNsTb23tAjRKM7pLUA&s",
+        avatars: [
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtSGolwB3QcDsowwOQgssNSqkyvcQ8PFuEd49E-wh22A&s=10",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRipwyvPnHP3c7Kq11CHLCxVLaUtKc7HT5aJn90_fgNsg&s=10",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6ASe4DnK1Tgr-qTMywEyDVcOayBauDXo_sh8VeIBPBA&s=10"
+        ],
+        moreCount: 5,
+        joinUrl: "https://www.roblox.com/games/7/",
+        isAvailable: true
+      },
+      {
+        title: "2p Sf",
+        category: "POPULAR",
+        maxPlayers: 20,
+        playersOnline: 16,
+        imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6ASe4DnK1Tgr-qTMywEyDVcOayBauDXo_sh8VeIBPBA&s=10",
+        avatars: [
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_2j8Bj92w2xcvVXPa8kEUWeXouyQABh8t46lWF6-Ecw&s=10",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRDt1k8vvdW4bBaq1oBpNgNs3b4nH0aS8lNgA19OLNrUw&s=10",
+          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFbX9gt9FrzP-Gq6zOWlT4_BFX9PeHAsrTfVMEX2OqjQ&s=10"
+        ],
+        moreCount: 13,
+        joinUrl: "https://www.roblox.com/games/8/",
+        isAvailable: true
+      },
+    ];
+
+    // ============================================================
+    // ===== END OF EDITABLE CONFIGURATION ========================
+    // ============================================================
+
+    /* ===== DOM REFS ===== */
+    const serverGrid = document.getElementById('serverGrid');
+    const searchInput = document.getElementById('searchInput');
+    const filterPills = document.getElementById('filterPills');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const loadingBar = document.getElementById('loadingBar');
+    const toast = document.getElementById('toast');
+    const discordFloatBtn = document.getElementById('discordFloatBtn');
+    const headerSearchBtn = document.getElementById('headerSearchBtn');
+    const headerDiscordBtn = document.getElementById('headerDiscordBtn');
+    const siteTitleEl = document.getElementById('siteTitle');
+    const noticeTitleEl = document.getElementById('noticeTitle');
+    const noticeTextEl = document.getElementById('noticeText');
+    const noticeActionsEl = document.getElementById('noticeActions');
+
+    /* ===== STATE ===== */
+    let currentFilter = 'all';
+    let currentSearch = '';
+    let loadingTimer = null;
+    let loadingInterval = null;
+    let toastTimer = null;
+
+    /* ===== INIT ===== */
+    function init() {
+      siteTitleEl.innerHTML = `${SITE_CONFIG.titlePrefix} <span class="highlight">${SITE_CONFIG.titleHighlight}</span> ${SITE_CONFIG.titleSuffix}`;
+      
+      noticeTitleEl.innerHTML = NOTICE_CONFIG.title;
+      noticeTextEl.textContent = NOTICE_CONFIG.text;
+      
+      noticeActionsEl.innerHTML = '';
+      NOTICE_CONFIG.buttons.forEach(btn => {
+        const el = document.createElement('button');
+        el.className = 'btn-outline';
+        el.textContent = btn.label;
+        el.addEventListener('click', () => {
+          if (btn.url && btn.url !== '#' && btn.url.trim() !== '') {
+            window.open(btn.url, '_blank', 'noopener,noreferrer');
+          } else {
+            showToast('Link not configured yet.');
+          }
+        });
+        noticeActionsEl.appendChild(el);
+      });
+
+      createParticles();
+      renderServers();
+
+      searchInput.addEventListener('input', (e) => {
+        currentSearch = e.target.value.toLowerCase().trim();
+        renderServers();
+      });
+
+      filterPills.addEventListener('click', (e) => {
+        const pill = e.target.closest('.filter-pill');
+        if (!pill) return;
+        document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        currentFilter = pill.dataset.filter;
+        renderServers();
+      });
+
+      discordFloatBtn.addEventListener('click', handleDiscordClick);
+      headerDiscordBtn.addEventListener('click', handleDiscordClick);
+
+      headerSearchBtn.addEventListener('click', () => {
+        searchInput.focus();
+        searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    }
+
+    /* ===== DISCORD HANDLER ===== */
+    function handleDiscordClick() {
+      if (DISCORD_CONFIG.inviteUrl && DISCORD_CONFIG.inviteUrl.trim() !== '' && DISCORD_CONFIG.inviteUrl !== 'https://discord.gg/yourinvite') {
+        window.open(DISCORD_CONFIG.inviteUrl, '_blank', 'noopener,noreferrer');
+      } else {
+        showToast(DISCORD_CONFIG.fallbackMessage);
+      }
+    }
+
+    /* ===== TOAST ===== */
+    function showToast(message, duration = 3000) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, duration);
+    }
+
+    /* ===== PARTICLES ===== */
+    function createParticles() {
+      const container = document.getElementById('particles');
+      if (!container) return;
+      const count = window.innerWidth < 600 ? 12 : 20;
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDelay = Math.random() * 12 + 's';
+        p.style.animationDuration = (10 + Math.random() * 12) + 's';
+        p.style.width = p.style.height = (1 + Math.random() * 3) + 'px';
+        p.style.opacity = 0.2 + Math.random() * 0.4;
+        container.appendChild(p);
+      }
+    }
+
+    /* ===== RENDER SERVER CARDS ===== */
+    function renderServers() {
+      let filtered = SERVERS.filter(s => {
+        const matchesSearch = s.title.toLowerCase().includes(currentSearch);
+        let matchesFilter = true;
+        if (currentFilter === 'available') matchesFilter = s.isAvailable;
+        if (currentFilter === 'popular') matchesFilter = s.playersOnline / s.maxPlayers >= 0.5;
+        return matchesSearch && matchesFilter;
+      });
+
+      serverGrid.innerHTML = '';
+
+      if (filtered.length === 0) {
+        serverGrid.innerHTML = `
+          <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+            </svg>
+            <p>No servers match your search. Try a different keyword or filter.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach((server, index) => {
+        const card = createServerCard(server, index);
+        serverGrid.appendChild(card);
+      });
+    }
+
+    function createServerCard(server, index) {
+      const card = document.createElement('div');
+      card.className = 'server-card';
+      card.style.setProperty('--i', index);
+      card.setAttribute('role', 'listitem');
+
+      const isAvailable = server.isAvailable;
+      const badgeText = isAvailable ? 'AVAILABLE' : 'OFFLINE';
+      const badgeStyle = isAvailable 
+        ? 'background: rgba(57,229,140,0.12); border-color: #39E58C; color: #39E58C;' 
+        : 'background: rgba(255,80,80,0.12); border-color: #ff5050; color: #ff5050;';
+
+      // Build avatars with unique images and fallback
+      const avatarHtml = server.avatars.slice(0, 3).map((url, i) => 
+        `<img class="avatar" src="${url}" alt="Player avatar ${i+1}" loading="lazy" 
+          onerror="this.style.background='#2a2d1e'; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2250%22 fill=%22%232a2d1e%22/%3E%3Ctext x=%2250%22 y=%2265%22 text-anchor=%22middle%22 fill=%22%23D4AD00%22 font-size=%2240%22 font-family=%22Arial%22%3E?%3C/text%3E%3C/svg%3E';">`
+      ).join('');
+
+      card.innerHTML = `
+        <div class="card-image-wrap">
+          <img class="card-image" src="${server.imageUrl}" alt="${server.title} preview" loading="lazy" 
+               onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #1a1d12, #0d0f08)';">
+          <div class="card-overlay"></div>
+          <span class="card-category">${server.category}</span>
+          <span class="badge-available" style="${badgeStyle}">${badgeText}</span>
+        </div>
+        <div class="card-body">
+          <div class="card-title-row">
+            <h3 class="card-title">${server.title}</h3>
+            <div class="card-max-label">
+              <span>MAX</span>
+              <span class="card-max-number">${server.maxPlayers}</span>
+            </div>
+          </div>
+          <div class="players-row">
+            <div class="avatar-stack">
+              ${avatarHtml}
+              <span class="avatar-more">+${server.moreCount}</span>
+            </div>
+            <span class="online-count"><strong>${server.playersOnline}</strong> / ${server.maxPlayers} Online</span>
+          </div>
+          <button class="join-btn" data-url="${server.joinUrl || ''}" aria-label="Join ${server.title} server">
+            JOIN SERVER
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+          </button>
+        </div>
+      `;
+
+      const joinBtn = card.querySelector('.join-btn');
+      joinBtn.addEventListener('click', () => {
+        const url = joinBtn.dataset.url;
+        startJoinFlow(url);
+      });
+
+      return card;
+    }
+
+    /* ===== JOIN FLOW ===== */
+    function startJoinFlow(url) {
+      loadingOverlay.classList.add('active');
+      loadingOverlay.setAttribute('aria-hidden', 'false');
+      loadingBar.style.width = '0%';
+      document.getElementById('loadingText').innerHTML = 'CONNECTING TO <span class="gold">SERVER</span>...';
+      document.getElementById('loadingNote').textContent = 'This is a demonstration animation. No real connection is being made.';
+
+      let progress = 0;
+      clearInterval(loadingInterval);
+      loadingInterval = setInterval(() => {
+        progress += Math.random() * 18 + 4;
+        if (progress > 100) progress = 100;
+        loadingBar.style.width = progress + '%';
+        if (progress >= 100) {
+          clearInterval(loadingInterval);
+        }
+      }, 120);
+
+      clearTimeout(loadingTimer);
+      loadingTimer = setTimeout(() => {
+        loadingOverlay.classList.remove('active');
+        loadingOverlay.setAttribute('aria-hidden', 'true');
+        clearInterval(loadingInterval);
+        loadingBar.style.width = '0%';
+
+        if (url && url.trim() !== '' && url !== '#') {
+          window.open(url, '_blank', 'noopener,noreferrer');
+        } else {
+          showToast('⚠️ No server URL configured for this game. Please set it in the config.');
+        }
+      }, 2200);
+    }
+
+    /* ===== START ===== */
+    document.addEventListener('DOMContentLoaded', init);
+
+  </script>
+</body>
+</html>
