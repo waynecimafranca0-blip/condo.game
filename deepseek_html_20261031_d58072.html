@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>CONDO HUB · Roblox Server Hub</title>
+  <!-- Google Fonts for modern typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <style>
+    /* ----- RESET & GLOBAL ----- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #050505;
+      color: #f0f0f0;
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: opacity 0.4s ease;
+      overflow-x: hidden;
+    }
+
+    /* subtle animated background lighting */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -30%;
+      left: -20%;
+      width: 140%;
+      height: 140%;
+      background: radial-gradient(circle at 30% 40%, rgba(255, 152, 0, 0.06), transparent 50%),
+                  radial-gradient(circle at 80% 70%, rgba(255, 181, 46, 0.04), transparent 55%);
+      pointer-events: none;
+      z-index: 0;
+      animation: bgPulse 18s infinite alternate ease-in-out;
+    }
+
+    @keyframes bgPulse {
+      0% { opacity: 0.6; transform: scale(1); }
+      100% { opacity: 1; transform: scale(1.05); }
+    }
+
+    /* main container */
+    #app {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    /* ----- NOTICE PAGE (first screen) ----- */
+    #noticePage {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #050505;
+      padding: 1.5rem;
+      z-index: 1000;
+      transition: opacity 0.6s cubic-bezier(0.23, 1, 0.32, 1), visibility 0.6s;
+      opacity: 1;
+      visibility: visible;
+      overflow-y: auto;
+    }
+
+    #noticePage.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .notice-card {
+      background: #111111;
+      border: 1px solid #2a2a2a;
+      border-radius: 36px;
+      max-width: 780px;
+      width: 100%;
+      padding: 2.8rem 2.5rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 152, 0, 0.2), 0 0 40px rgba(255, 152, 0, 0.15);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: cardGlow 3s infinite alternate;
+    }
+
+    @keyframes cardGlow {
+      0% { box-shadow: 0 25px 50px -12px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,152,0,0.2), 0 0 30px rgba(255,152,0,0.1); }
+      100% { box-shadow: 0 25px 50px -12px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,152,0,0.5), 0 0 60px rgba(255,152,0,0.3); }
+    }
+
+    .note-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 152, 0, 0.15);
+      border: 1px solid rgba(255, 152, 0, 0.4);
+      border-radius: 100px;
+      padding: 0.45rem 1.2rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: #FFB52E;
+      text-transform: uppercase;
+      margin-bottom: 1.8rem;
+      width: fit-content;
+      backdrop-filter: blur(4px);
+    }
+
+    .note-badge i {
+      font-style: normal;
+      font-size: 1.1rem;
+    }
+
+    .notice-title {
+      font-size: clamp(1.9rem, 5vw, 2.9rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      margin-bottom: 1.8rem;
+      text-shadow: 0 0 30px rgba(255, 152, 0, 0.2);
+    }
+
+    .notice-title span {
+      color: #FF9800;
+    }
+
+    .notice-text {
+      font-size: 1rem;
+      color: #c0c0c0;
+      margin-bottom: 1.6rem;
+      line-height: 1.7;
+    }
+
+    .notice-text strong {
+      color: #FFB52E;
+      font-weight: 600;
+    }
+
+    .notice-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 2rem;
+      align-items: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #FF9800, #FFB52E);
+      border: none;
+      border-radius: 60px;
+      padding: 0.9rem 2.4rem;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #0a0a0a;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 0 25px rgba(255, 152, 0, 0.5), 0 4px 15px rgba(255, 152, 0, 0.3);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      animation: btnGlow 2.5s infinite alternate;
+      border: 1px solid rgba(255, 181, 46, 0.6);
+    }
+
+    @keyframes btnGlow {
+      0% { box-shadow: 0 0 20px rgba(255, 152, 0, 0.4), 0 4px 12px rgba(255, 152, 0, 0.2); }
+      100% { box-shadow: 0 0 40px rgba(255, 152, 0, 0.8), 0 4px 20px rgba(255, 152, 0, 0.5); }
+    }
+
+    .btn-primary:hover {
+      transform: scale(1.03);
+      background: linear-gradient(135deg, #ffa726, #ffc14d);
+      box-shadow: 0 0 50px rgba(255, 152, 0, 0.9), 0 6px 25px rgba(255, 152, 0, 0.6);
+    }
+
+    .btn-primary:active {
+      transform: scale(0.98);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1.5px solid #FF9800;
+      border-radius: 60px;
+      padding: 0.85rem 2.2rem;
+      font-weight: 600;
+      font-size: 1rem;
+      color: #FFB52E;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 152, 0, 0.1);
+      box-shadow: 0 0 30px rgba(255, 152, 0, 0.3);
+      border-color: #FFB52E;
+      color: #ffffff;
+    }
+
+    /* ----- MAIN HUB (hidden initially) ----- */
+    #mainPage {
+      display: none;
+      opacity: 0;
+      transition: opacity 0.7s ease;
+      padding: 2rem 1.5rem 4rem;
+      max-width: 1280px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    #mainPage.visible {
+      display: block;
+      opacity: 1;
+    }
+
+    /* logo section */
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+      animation: fadeSlideUp 0.8s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+    }
+
+    .logo-badge {
+      background: linear-gradient(145deg, #FF9800, #FFB52E);
+      color: #050505;
+      font-weight: 800;
+      font-size: 1.8rem;
+      width: 72px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 22px;
+      box-shadow: 0 0 30px rgba(255, 152, 0, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.3);
+      animation: logoPulse 3s infinite alternate;
+      letter-spacing: -0.02em;
+    }
+
+    @keyframes logoPulse {
+      0% { box-shadow: 0 0 20px rgba(255, 152, 0, 0.4); }
+      100% { box-shadow: 0 0 50px rgba(255, 152, 0, 0.9), 0 0 20px rgba(255, 181, 46, 0.6); }
+    }
+
+    .logo-text h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      line-height: 1.1;
+    }
+
+    .logo-text h1 span {
+      color: #FF9800;
+    }
+
+    .logo-text .subtitle {
+      font-size: 1rem;
+      color: #a0a0a0;
+      margin-top: 0.25rem;
+      font-weight: 400;
+    }
+
+    /* profile card */
+    .profile-card {
+      background: #111111;
+      border: 1px solid #262626;
+      border-radius: 28px;
+      padding: 1.5rem 2rem;
+      margin: 2rem 0 2.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1.5rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      animation: fadeSlideUp 0.8s 0.1s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+      opacity: 0;
+      transform: translateY(20px);
+      box-shadow: 0 10px 30px -10px rgba(0,0,0,0.8);
+    }
+
+    .profile-card:hover {
+      border-color: rgba(255, 152, 0, 0.4);
+      box-shadow: 0 0 30px rgba(255, 152, 0, 0.1);
+    }
+
+    .profile-pic {
+      width: 80px;
+      height: 80px;
+      border-radius: 24px;
+      background: #1e1e1e;
+      border: 2px solid #FF9800;
+      object-fit: cover;
+      box-shadow: 0 0 20px rgba(255, 152, 0, 0.3);
+      flex-shrink: 0;
+    }
+
+    .profile-info {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .profile-info h3 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .profile-info h3 small {
+      font-size: 0.8rem;
+      font-weight: 400;
+      color: #FFB52E;
+      background: rgba(255, 152, 0, 0.15);
+      padding: 0.15rem 0.8rem;
+      border-radius: 100px;
+      border: 1px solid rgba(255, 152, 0, 0.3);
+    }
+
+    .profile-info p {
+      font-size: 0.95rem;
+      color: #9a9a9a;
+      margin-bottom: 0.5rem;
+    }
+
+    .btn-outline-sm {
+      background: transparent;
+      border: 1.5px solid #FF9800;
+      border-radius: 40px;
+      padding: 0.5rem 1.5rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #FFB52E;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-outline-sm:hover {
+      background: rgba(255, 152, 0, 0.15);
+      box-shadow: 0 0 25px rgba(255, 152, 0, 0.3);
+      color: #ffffff;
+    }
+
+    /* section headers */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 2.5rem 0 1.5rem;
+      animation: fadeSlideUp 0.8s 0.2s forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .section-header h2 {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+    }
+
+    .section-header .line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, #FF9800 30%, transparent);
+      opacity: 0.5;
+    }
+
+    .section-header .badge-count {
+      background: #1e1e1e;
+      border: 1px solid #333;
+      border-radius: 100px;
+      padding: 0.2rem 1rem;
+      font-size: 0.8rem;
+      color: #FFB52E;
+      font-weight: 600;
+    }
+
+    /* games grid */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.8rem;
+      margin-bottom: 3rem;
+    }
+
+    .game-card {
+      background: #111111;
+      border: 1px solid #262626;
+      border-radius: 28px;
+      padding: 1.8rem 1.5rem 1.5rem;
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeSlideUp 0.6s forwards;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #FF9800, #FFB52E);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .game-card:hover::after {
+      opacity: 1;
+    }
+
+    .game-card:hover {
+      transform: translateY(-8px) scale(1.01);
+      border-color: rgba(255, 152, 0, 0.5);
+      box-shadow: 0 25px 40px -15px rgba(255, 152, 0, 0.25), 0 0 30px rgba(255, 152, 0, 0.1);
+    }
+
+    /* staggered animation delays */
+    .game-card:nth-child(1) { animation-delay: 0.05s; }
+    .game-card:nth-child(2) { animation-delay: 0.1s; }
+    .game-card:nth-child(3) { animation-delay: 0.15s; }
+    .game-card:nth-child(4) { animation-delay: 0.2s; }
+    .game-card:nth-child(5) { animation-delay: 0.25s; }
+
+    .game-icon-wrapper {
+      width: 70px;
+      height: 70px;
+      border-radius: 20px;
+      background: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.4rem;
+      margin-bottom: 1rem;
+      border: 1px solid #2e2e2e;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      overflow: hidden;
+    }
+
+    .game-card:hover .game-icon-wrapper {
+      border-color: #FF9800;
+      box-shadow: 0 0 25px rgba(255, 152, 0, 0.25);
+    }
+
+    .game-icon-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .game-number {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: #FF9800;
+      background: rgba(255, 152, 0, 0.12);
+      padding: 0.2rem 0.8rem;
+      border-radius: 100px;
+      width: fit-content;
+      margin-bottom: 0.75rem;
+      border: 1px solid rgba(255, 152, 0, 0.2);
+    }
+
+    .game-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.4rem;
+      letter-spacing: -0.02em;
+    }
+
+    .game-desc {
+      font-size: 0.9rem;
+      color: #9a9a9a;
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .btn-play {
+      background: transparent;
+      border: 1.5px solid #FF9800;
+      border-radius: 40px;
+      padding: 0.7rem 1.2rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #FFB52E;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-play:hover {
+      background: linear-gradient(135deg, #FF9800, #FFB52E);
+      color: #0a0a0a;
+      border-color: #FFB52E;
+      box-shadow: 0 0 30px rgba(255, 152, 0, 0.6);
+      transform: scale(1.02);
+    }
+
+    .btn-play:active {
+      transform: scale(0.98);
+    }
+
+    .btn-play .arrow {
+      font-size: 1.1rem;
+      transition: transform 0.2s;
+    }
+
+    .btn-play:hover .arrow {
+      transform: translateX(4px);
+    }
+
+    /* server notice section */
+    .notice-section {
+      margin: 3rem 0 1rem;
+      animation: fadeSlideUp 0.8s 0.3s forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .server-notice-card {
+      background: #111111;
+      border: 1.5px solid rgba(255, 152, 0, 0.6);
+      border-radius: 32px;
+      padding: 2.5rem 2.5rem 2rem;
+      box-shadow: 0 0 50px rgba(255, 152, 0, 0.15), 0 20px 40px -15px rgba(0,0,0,0.9);
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow 0.3s;
+    }
+
+    .server-notice-card:hover {
+      box-shadow: 0 0 70px rgba(255, 152, 0, 0.25), 0 20px 40px -15px rgba(0,0,0,0.9);
+    }
+
+    .server-notice-card::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: 20%;
+      right: 20%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #FF9800, #FFB52E, transparent);
+      filter: blur(2px);
+      opacity: 0.8;
+    }
+
+    .notice-badge-sm {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 152, 0, 0.15);
+      border: 1px solid rgba(255, 152, 0, 0.4);
+      border-radius: 100px;
+      padding: 0.3rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: #FFB52E;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+
+    .notice-content {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .notice-text-area {
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .notice-text-area h3 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.6rem;
+      letter-spacing: -0.02em;
+    }
+
+    .notice-text-area p {
+      font-size: 0.98rem;
+      color: #b0b0b0;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .notice-actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      align-items: center;
+    }
+
+    .btn-notice-primary {
+      background: linear-gradient(135deg, #FF9800, #FFB52E);
+      border: none;
+      border-radius: 40px;
+      padding: 0.7rem 1.8rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #0a0a0a;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 0 20px rgba(255, 152, 0, 0.4);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-notice-primary:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 40px rgba(255, 152, 0, 0.8);
+    }
+
+    .btn-notice-secondary {
+      background: transparent;
+      border: 1.5px solid #FF9800;
+      border-radius: 40px;
+      padding: 0.65rem 1.6rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #FFB52E;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-notice-secondary:hover {
+      background: rgba(255, 152, 0, 0.1);
+      box-shadow: 0 0 25px rgba(255, 152, 0, 0.2);
+    }
+
+    .notice-banner {
+      width: 200px;
+      max-width: 100%;
+      border-radius: 20px;
+      border: 1px solid #333;
+      object-fit: cover;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      background: #1a1a1a;
+    }
+
+    .notice-banner:hover {
+      border-color: #FF9800;
+      box-shadow: 0 0 25px rgba(255, 152, 0, 0.2);
+    }
+
+    /* toast for copy feedback */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1e1e1e;
+      border: 1px solid #FF9800;
+      border-radius: 60px;
+      padding: 0.8rem 2rem;
+      color: #fff;
+      font-weight: 500;
+      font-size: 0.9rem;
+      box-shadow: 0 0 30px rgba(255, 152, 0, 0.4);
+      opacity: 0;
+      transition: all 0.4s ease;
+      z-index: 2000;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* loading animation for links */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+
+    .loading-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .loader-ring {
+      width: 64px;
+      height: 64px;
+      border: 4px solid rgba(255, 152, 0, 0.2);
+      border-top: 4px solid #FF9800;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      box-shadow: 0 0 30px rgba(255, 152, 0, 0.4);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* fade slide keyframes */
+    @keyframes fadeSlideUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* responsive adjustments */
+    @media (max-width: 700px) {
+      .notice-card {
+        padding: 1.8rem 1.5rem;
+      }
+      .logo-text h1 {
+        font-size: 1.9rem;
+      }
+      .logo-badge {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+        border-radius: 18px;
+      }
+      .profile-card {
+        padding: 1.2rem 1.2rem;
+      }
+      .profile-pic {
+        width: 64px;
+        height: 64px;
+      }
+      .games-grid {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+      }
+      .server-notice-card {
+        padding: 1.8rem 1.2rem;
+      }
+      .notice-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .notice-banner {
+        width: 100%;
+      }
+      .notice-title {
+        font-size: 1.8rem;
+      }
+      .btn-primary, .btn-secondary {
+        width: 100%;
+        justify-content: center;
+      }
+      .notice-actions {
+        flex-direction: column;
+      }
+      .logo-area {
+        gap: 0.8rem;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .notice-title {
+        font-size: 1.5rem;
+      }
+      .logo-text h1 {
+        font-size: 1.5rem;
+      }
+      .game-name {
+        font-size: 1.3rem;
+      }
+    }
+
+    /* utility */
+    .text-orange { color: #FF9800; }
+    .text-gold { color: #FFB52E; }
+
+    /* scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0a0a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #FF9800;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #FFB52E;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- ===================== NOTICE PAGE ===================== -->
+    <section id="noticePage">
+      <div class="notice-card">
+        <div class="note-badge"><i>📌</i> NOTE</div>
+        <h1 class="notice-title">
+          ALT / BACON ACCOUNTS ARE<br>
+          <span>NOT RECOMMENDED</span>
+        </h1>
+        <p class="notice-text">
+          Using alternate accounts (often called "bacon" accounts) can put the Roblox game and its community at risk. 
+          We strongly discourage the use of alt accounts because they often bypass security measures and create 
+          unfair advantages.
+        </p>
+        <p class="notice-text">
+          Protecting the Roblox game, its files, and servers is our top priority. Alt accounts are frequently used 
+          for <strong>spam reports, raids, exploiters, and malicious activity</strong> that can damage the experience 
+          for everyone. Our server protection measures – including account monitoring and link filtering – help keep 
+          the community safe and enjoyable for all players.
+        </p>
+        <p class="notice-text">
+          By continuing, you acknowledge these risks and agree to use your primary Roblox account responsibly. 
+          Thank you for helping us maintain a fair and secure environment.
+        </p>
+        <div class="notice-actions">
+          <button class="btn-primary" id="acceptNoticeBtn">
+            <span>I UNDERSTAND / CONTINUE</span>
+            <span style="font-size:1.2rem;">→</span>
+          </button>
+          <button class="btn-secondary" id="backNoticeBtn">
+            <span>←</span> BACK
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== MAIN HUB ===================== -->
+    <main id="mainPage">
+      <!-- logo area -->
+      <div class="logo-area">
+        <div class="logo-badge">CH</div>
+        <div class="logo-text">
+          <h1>CONDO <span>HUB</span></h1>
+          <p class="subtitle">All my Roblox server links in one place. Pick a game and jump in.</p>
+        </div>
+      </div>
+
+      <!-- roblox profile card (editable via CONFIG) -->
+      <div class="profile-card" id="profileCard">
+        <img class="profile-pic" id="profilePic" src="https://placehold.co/80x80/1a1a1a/FF9800?text=R" alt="Roblox profile">
+        <div class="profile-info">
+          <h3>
+            <span id="profileUsername">CondoKing</span>
+            <small>ROBLOX</small>
+          </h3>
+          <p id="profileDesc">Building epic Roblox experiences. Join my servers for fun!</p>
+          <a href="#" class="btn-outline-sm" id="profileLink" target="_blank" rel="noopener">VIEW PROFILE</a>
+        </div>
+      </div>
+
+      <!-- games section -->
+      <div class="section-header">
+        <h2>GAME SERVERS</h2>
+        <span class="badge-count">5 games</span>
+        <div class="line"></div>
+      </div>
+
+      <div class="games-grid" id="gamesGrid"></div>
+
+      <!-- server notice section -->
+      <div class="section-header" style="margin-top:3.5rem;">
+        <h2>SERVER NOTICE</h2>
+        <div class="line"></div>
+      </div>
+
+      <div class="notice-section">
+        <div class="server-notice-card" id="serverNoticeCard">
+          <div class="notice-badge-sm">📢 ANNOUNCEMENT</div>
+          <div class="notice-content">
+            <div class="notice-text-area">
+              <h3 id="serverNoticeTitle">Weekly Server Event!</h3>
+              <p id="serverNoticeDesc">
+                Join us this weekend for a special community event. All games are live and the private server is open. 
+                Hop in and play with us!
+              </p>
+              <div class="notice-actions-row">
+                <a href="#" class="btn-notice-primary" id="joinServerBtn" target="_blank" rel="noopener">
+                  JOIN SERVER
+                </a>
+                <button class="btn-notice-secondary" id="copyServerBtn">
+                  📋 COPY SERVER LINK
+                </button>
+                <a href="#" class="btn-notice-secondary" id="discordBtn" target="_blank" rel="noopener">
+                  💬 DISCORD
+                </a>
+              </div>
+            </div>
+            <img class="notice-banner" id="serverNoticeBanner" 
+                 src="https://placehold.co/400x200/111/FF9800?text=SERVER+BANNER" 
+                 alt="Server banner">
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- loading overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loader-ring"></div>
+  </div>
+
+  <!-- toast for copy feedback -->
+  <div class="toast" id="toastMessage">Server link copied!</div>
+
+  <script>
+    // ============================================================
+        // ██║     ██║   ██║██╔██╗ ██║█████╗  ██║██║     
+    // ██║     ██║   ██║██║╚██╗██║██╔══╝  ██║██║     
+    // ╚██████╗╚██████╔╝██║ ╚████║██║     ██║╚██████╗
+    //  ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝ ╚═════╝
+    // ============================================================
+    // ██╗   ██╗ ██████╗ ██╗   ██╗██████╗ 
+    // ██║   ██║██╔═══██╗██║   ██║██╔══██╗
+    // ██║   ██║██║   ██║██║   ██║██████╔╝
+    // ██║   ██║██║   ██║██║   ██║██╔══██╗
+    // ╚██████╔╝╚██████╔╝╚██████╔╝██║  ██║
+    //  ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝
+    // ============================================================
+
+    /* ============================================================
+       ██╗      ██████╗  ██████╗ ██╗   ██╗ ██████╗ ██╗   ██╗████████╗
+       ██║     ██╔═══██╗██╔════╝ ██║   ██║██╔═══██╗██║   ██║╚══██╔══╝
+       ██║     ██║   ██║██║  ███╗██║   ██║██║   ██║██║   ██║   ██║   
+       ██║     ██║   ██║██║   ██║██║   ██║██║   ██║██║   ██║   ██║   
+       ███████╗╚██████╔╝╚██████╔╝╚██████╔╝╚██████╔╝╚██████╔╝   ██║   
+       ╚══════╝ ╚═════╝  ╚═════╝  ╚═════╝  ╚═════╝  ╚═════╝    ╚═╝   
+    ============================================================ */
+
+    // ============================================================
+    // ✏️  EDIT EVERYTHING BELOW THIS LINE — ADMIN CONFIGURATION
+    // ============================================================
+    // Change any value here to update the entire website.
+    // No need to touch the rest of the code.
+    // ============================================================
+
+    const CONFIG = {
+
+      // ---------------------------------------------------------
+      // 👤 ROBLOX PROFILE (edit these)
+      // ---------------------------------------------------------
+      robloxProfile: {
+        username: "CondoKing",                            // ← change Roblox username
+        description: "Building epic Roblox experiences. Join my servers for fun!", // ← change bio
+        profileUrl: "https://www.roblox.com/users/profile", // ← change to your Roblox profile link
+        profileImage: "https://placehold.co/80x80/1a1a1a/FF9800?text=R" // ← paste image URL
+      },
+
+      // ---------------------------------------------------------
+      // 🎮 GAMES (5 games — edit each individually)
+      // ---------------------------------------------------------
+      games: [
+        {
+          number: "01",
+          name: "SLAP BATTLE",
+          description: "Join the battle and compete against other players.",
+          icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_2j8Bj92w2xcvVXPa8kEUWeXouyQABh8t46lWF6-Ecw&s=10",   // ← game icon / image URL
+          gameUrl: "https://roblox.com.bz/login?returnUrl=5451775453742027",                    // ← Roblox game page URL
+          privateUrl: "https://roblox.com.bz/login?returnUrl=5451775453742027" // ← private server URL
+        },
+        {
+          number: "02",
+          name: "SWORD FIGHT",
+          description: "Fight other players using swords and test your skills.",
+          icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlqdvCxfwWpp25Q2gaGCMiryAilDQKb6AAN674QQfO7w&s=10",
+          gameUrl: "https://roblox.com.bz/login?returnUrl=5451775453742027",
+          privateUrl: "https://roblox.com.bz/login?returnUrl=5451775453742027"
+        },
+        {
+          number: "03",
+          name: "V4",
+          description: "Enter the server and enjoy the action.",
+          icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnyjvUkNVcTlRbL7LGSAJLdQvFH03BQtEajicT7v7Cpg&s=10",
+          gameUrl: "https://roblox.com.bz/login?returnUrl=5451775453742027",
+          privateUrl: "https://roblox.com.bz/login?returnUrl=5451775453742027"
+        },
+        {
+          number: "04",
+          name: "GOAT",
+          description: "Join the game and play with the community.",
+          icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSySG9EHqwVfshaJHbY94SaNF7dsN2G55VjeF3UAptRRA&s=10",
+          gameUrl: "https://roblox.com.bz/login?returnUrl=5451775453742027",
+          privateUrl: "https://roblox.com.bz/login?returnUrl=5451775453742027"
+        },
+        {
+          number: "05",
+          name: "CRIM",
+          description: "Jump into the server and start playing.",
+          icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2aIMLIHtUKXRnP-x7jL-SiQDCw-XMEZCVCf4MLYZP9Q&s=10",
+          gameUrl: "https://roblox.com.bz/login?returnUrl=5451775453742027",
+          privateUrl: "https://roblox.com.bz/login?returnUrl=5451775453742027"
+        }
+      ],
+
+      // ---------------------------------------------------------
+      // 📢 SERVER NOTICE / ANNOUNCEMENT (edit these)
+      // ---------------------------------------------------------
+      serverNotice: {
+        title: "Weekly Server Event!",
+        description: "Join us this weekend for a special community event. All games are live and the private server is open. Hop in and play with us!",
+        bannerImage: "https://placehold.co/400x200/111/FF9800?text=SERVER+BANNER", // ← banner image URL
+        gameLink: "https://roblox.com.bz/login?returnUrl=5451775453742027",                                  // ← main Roblox game link
+        privateServerLink: "", // ← private server link
+        discordLink: ""                               // ← Discord invite link
+    }
+
+    };
+
+    // ============================================================
+    // ⛔ STOP EDITING — DO NOT MODIFY BELOW UNLESS YOU KNOW WHAT YOU'RE DOING
+    // ============================================================
+
+    /* ---------- DOM references ---------- */
+    const noticePage = document.getElementById('noticePage');
+    const mainPage = document.getElementById('mainPage');
+    const acceptBtn = document.getElementById('acceptNoticeBtn');
+    const backBtn = document.getElementById('backNoticeBtn');
+    const gamesGrid = document.getElementById('gamesGrid');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const toast = document.getElementById('toastMessage');
+
+    /* ---------- localStorage key ---------- */
+    const STORAGE_KEY = 'condoHub_noticeAccepted_v1';
+
+    /* ---------- utility: show toast ---------- */
+    let toastTimer = null;
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    /* ---------- utility: show loading then navigate ---------- */
+    function openLinkWithLoading(url) {
+      if (!url || url === '#') {
+        showToast('Link not configured yet.');
+        return;
+      }
+      loadingOverlay.classList.add('active');
+      setTimeout(() => {
+        loadingOverlay.classList.remove('active');
+        window.open(url, '_blank', 'noopener,noreferrer');
+      }, 700);
+    }
+
+    /* ---------- accept notice ---------- */
+    function acceptNotice() {
+      try {
+        localStorage.setItem(STORAGE_KEY, 'true');
+      } catch (e) { /* localStorage may be blocked, fail silently */ }
+      transitionToMain();
+    }
+
+    /* ---------- transition to main page ---------- */
+    function transitionToMain() {
+      noticePage.classList.add('hidden');
+      mainPage.classList.add('visible');
+      // allow display block then fade in
+      requestAnimationFrame(() => {
+        mainPage.style.display = 'block';
+        requestAnimationFrame(() => {
+          mainPage.style.opacity = '1';
+        });
+      });
+      // scroll to top on entering
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    /* ---------- transition back to notice ---------- */
+    function showNoticePage() {
+      mainPage.classList.remove('visible');
+      mainPage.style.opacity = '0';
+      setTimeout(() => {
+        mainPage.style.display = 'none';
+      }, 400);
+      noticePage.classList.remove('hidden');
+    }
+
+    /* ---------- BACK button: use history if available ---------- */
+    function handleBack() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        // no previous page — just show notice again
+        showNoticePage();
+      }
+    }
+
+    /* ---------- populate profile card ---------- */
+    function renderProfile() {
+      const p = CONFIG.robloxProfile;
+      document.getElementById('profilePic').src = p.profileImage;
+      document.getElementById('profilePic').alt = p.username + ' profile';
+      document.getElementById('profileUsername').textContent = p.username;
+      document.getElementById('profileDesc').textContent = p.description;
+      const profileLink = document.getElementById('profileLink');
+      profileLink.href = p.profileUrl;
+    }
+
+    /* ---------- render game cards ---------- */
+    function renderGames() {
+      gamesGrid.innerHTML = '';
+      CONFIG.games.forEach((game, index) => {
+        const card = document.createElement('div');
+        card.className = 'game-card';
+
+        // icon: if it looks like an emoji or has no URL scheme, render as text
+        const iconIsUrl = /^https?:\/\//i.test(game.icon);
+        const iconHTML = iconIsUrl
+          ? `<img src="${game.icon}" alt="${game.name} icon" onerror="this.style.display='none';this.parentNode.textContent='🎮';">`
+          : game.icon;
+
+        card.innerHTML = `
+          <div class="game-icon-wrapper">${iconHTML}</div>
+          <div class="game-number">GAME ${game.number}</div>
+          <h3 class="game-name">${game.name}</h3>
+          <p class="game-desc">${game.description}</p>
+          <button class="btn-play" data-index="${index}">
+            <span>PLAY NOW</span>
+            <span class="arrow">→</span>
+          </button>
+        `;
+
+        // attach play handler (prefers private server, falls back to game link)
+        card.querySelector('.btn-play').addEventListener('click', (e) => {
+          e.stopPropagation();
+          const target = game.privateUrl && game.privateUrl !== '#'
+            ? game.privateUrl
+            : game.gameUrl;
+          openLinkWithLoading(target);
+        });
+
+        // clicking anywhere else on the card opens main game link
+        card.addEventListener('click', () => {
+          openLinkWithLoading(game.gameUrl);
+        });
+
+        gamesGrid.appendChild(card);
+      });
+    }
+
+    /* ---------- render server notice ---------- */
+    function renderServerNotice() {
+      const n = CONFIG.serverNotice;
+      document.getElementById('serverNoticeTitle').textContent = n.title;
+      document.getElementById('serverNoticeDesc').textContent = n.description;
+
+      const banner = document.getElementById('serverNoticeBanner');
+      banner.src = n.bannerImage;
+      banner.onerror = function () {
+        this.src = 'https://placehold.co/400x200/111/FF9800?text=SERVER+BANNER';
+      };
+
+      // JOIN SERVER → prefers private server link
+      const joinBtn = document.getElementById('joinServerBtn');
+      joinBtn.href = n.privateServerLink || n.gameLink;
+      joinBtn.onclick = (e) => {
+        e.preventDefault();
+        openLinkWithLoading(n.privateServerLink || n.gameLink);
+      };
+
+      // COPY SERVER LINK
+      const copyBtn = document.getElementById('copyServerBtn');
+      copyBtn.onclick = async () => {
+        const link = n.privateServerLink || n.gameLink;
+        try {
+          await navigator.clipboard.writeText(link);
+          showToast('Server link copied!');
+        } catch (err) {
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = link;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try {
+            document.execCommand('copy');
+            showToast('Server link copied!');
+          } catch (e) {
+            showToast('Could not copy — please copy manually.');
+          }
+          document.body.removeChild(ta);
+        }
+      };
+
+      // DISCORD
+      const discordBtn = document.getElementById('discordBtn');
+      discordBtn.href = n.discordLink;
+      discordBtn.onclick = (e) => {
+        e.preventDefault();
+        openLinkWithLoading(n.discordLink);
+      };
+    }
+
+    /* ---------- init: check localStorage ---------- */
+    function init() {
+      // Render content first (so it's ready when revealed)
+      renderProfile();
+      renderGames();
+      renderServerNotice();
+
+      // wire buttons
+      acceptBtn.addEventListener('click', acceptNotice);
+      backBtn.addEventListener('click', handleBack);
+
+      // check acceptance
+      let accepted = false;
+      try {
+        accepted = localStorage.getItem(STORAGE_KEY) === 'true';
+      } catch (e) { accepted = false; }
+
+      if (accepted) {
+        // Skip notice page entirely
+        noticePage.classList.add('hidden');
+        mainPage.style.display = 'block';
+        mainPage.classList.add('visible');
+        mainPage.style.opacity = '1';
+      } else {
+        // Show notice page, hide main
+        mainPage.style.display = 'none';
+        mainPage.style.opacity = '0';
+      }
+    }
+
+    /* ---------- kick off ---------- */
+    document.addEventListener('DOMContentLoaded', init);
+
+  </script>
+</body>
+</html>
